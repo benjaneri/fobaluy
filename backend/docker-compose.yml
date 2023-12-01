@@ -1,0 +1,42 @@
+version: '3'
+services:
+  app:
+    build: .
+    container_name: fobaluy-app
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      DATABASE_HOST: mysql
+      DATABASE_PORT: 3306
+      DATABASE_NAME: fobaluy-database
+      DATABASE_USER: userFobaluy
+      DATABASE_PASSWORD: userFobaluy
+      REDIS_URL: 'redis://redis:6379'
+      PORT: 3000
+      BASE_URL: '/api'
+      JWT_EXPIRATION_TIME: '12h'
+      JWT_SECRET_KEY: 'H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjX'
+
+  mysql:
+    image: mysql:latest
+    container_name: fobaluy-database
+    depends_on:
+      - redis
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'arquitectura'
+      MYSQL_DATABASE: 'fobaluy-database'
+      MYSQL_USER: 'userFobaluy'
+      MYSQL_PASSWORD: 'userFobaluy'
+
+  redis:
+    image: redis:latest
+    container_name: fobaluy-redis
+    ports:
+      - '6379:6379'
